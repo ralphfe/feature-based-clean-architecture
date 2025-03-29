@@ -1,4 +1,4 @@
-# Feature Based Clean Architecture
+# Feature Sliced Clean Architecture
 
 A clean architecture-based Todo application with vertically sliced features with minimal added dependencies.
 
@@ -14,7 +14,7 @@ TodoApp/
 ├── platform/
 │   ├── TodoApp.Application              # Application business logic and CQRS handlers (Result and CQRS)
 │   ├── TodoApp.Domain                   # Domain entities and business rules
-│   └── TodoApp.Infrastructure           # Data access and external services implementation (EF Core In-memory)
+│   └── TodoApp.Infrastructure           # Data access and external services implementation (EF Core In-memory and Repository)
 └── tests/
     ├── TodoApp.API.IntegrationTests
     ├── TodoApp.Application.UnitTests
@@ -46,18 +46,3 @@ TodoApp/
 1. Clone the repository and navigate to project root
 2. Open solution `TodoApp.sln`
 3. Build and run from IDE interface
-
-## API Endpoints
-
-- `POST /todos` - Create a new todo
-- `GET /todos` - Get all todos
-- `GET /todos/{id}` - Get a specific todo
-- `PUT /todos/{id}/complete` - Mark a todo as complete
-
-## Technical Details
-
-- Built with .NET 8
-- Uses minimal APIs for endpoints (with Swagger for documentation and tests)
-- Implements CQRS and Result pattern (without added dependencies)
-- Follows Clean Architecture principles with Vertically Sliced features
-- Uses in-memory database for persistence (with Entity Framework)

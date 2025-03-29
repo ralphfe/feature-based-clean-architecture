@@ -27,7 +27,7 @@ public class CreateTodoEndpoint : IEndpoint
         
         if (result.Value is not null)
         {
-            return Results.Created(new Uri($"{Pattern}/{result.Value.Id}"), result.Value.Id);
+            return Results.Created(new Uri($"{Pattern}/{result.Value.Id}", UriKind.Relative), result.Value.Id);
         }
         
         return Results.BadRequest(new { error = result.Error });

@@ -12,7 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TodoApp.Application\TodoApp.Application.csproj" />
     <ProjectReference Include="..\TodoApp.Infrastructure\TodoApp.Infrastructure.csproj" />
   </ItemGroup>
 

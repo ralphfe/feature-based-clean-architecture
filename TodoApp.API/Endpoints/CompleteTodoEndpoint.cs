@@ -1,5 +1,5 @@
 using Microsoft.OpenApi.Models;
-using TodoApp.Application.Features.CompleteTodo;
+using TodoApp.Infrastructure.Persistence.Repository;
 
 namespace TodoApp.API.Endpoints;
 
@@ -21,9 +21,24 @@ public sealed class CompleteTodoEndpoint : IEndpoint
             .Produces(StatusCodes.Status404NotFound);
     }
     
-    private async Task<IResult> Handler(Guid id, CompleteTodoCommandHandler todoCommandHandler)
+    private async Task<IResult> Handler(Guid id, TodosRepository repository, ILogger<CompleteTodoEndpoint> logger)
     {
-        var res = await todoCommandHandler.Execute(id);
-        return res ? Results.NoContent() : Results.NotFound();
+        var todo = await repository.GetTodoByIdAsync(id);
+        
+        if (todo is null)
+        {
+            logger.LogInformation("Todo item with ID {Id} was not found", id);
+            return Results.NotFound();
+        }
+        
+        if (todo.IsCompleted)
+        {
+            logger.LogInformation("Todo item with ID {Id} is already completed", id);
+            return Results.NotFound();
+        }
+        
+        todo.MarkAsCompleted();
+        await repository.PatchTodoAsync(todo);
+        return Results.NoContent();
     }
 }

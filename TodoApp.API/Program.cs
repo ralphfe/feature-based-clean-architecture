@@ -5,7 +5,6 @@ using TodoApp.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 var isDevelopment = builder.Environment.IsDevelopment();
 {
-    builder.Services.AddApplication();
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddSwagger(isDevelopment);
 }

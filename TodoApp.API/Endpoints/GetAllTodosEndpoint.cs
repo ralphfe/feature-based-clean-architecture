@@ -1,6 +1,6 @@
 using Microsoft.OpenApi.Models;
-using TodoApp.Application.Features.GetAllTodos;
 using TodoApp.Domain.Entities;
+using TodoApp.Infrastructure.Persistence.Repository;
 
 namespace TodoApp.API.Endpoints;
 
@@ -21,9 +21,9 @@ public class GetAllTodosEndpoint : IEndpoint
             .Produces<IEnumerable<Todo>>(StatusCodes.Status200OK);
     }
     
-    private async Task<IResult> Handler(GetAllTodosQueryHandler getAllTodosQuery)
+    private async Task<IResult> Handler(TodosRepository repository)
     {
-        var todos = await getAllTodosQuery.Execute();
+        var todos = await repository.GetAllTodosAsync();
         return Results.Ok(todos);
     }
 }

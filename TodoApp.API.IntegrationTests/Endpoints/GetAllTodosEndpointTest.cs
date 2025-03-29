@@ -1,21 +1,18 @@
 using Microsoft.Extensions.DependencyInjection;
-using TodoApp.Application.Interfaces;
 using TodoApp.Domain.Entities;
+using TodoApp.Infrastructure.Persistence.Repository;
 
 namespace TodoApp.API.IntegrationTests.Endpoints;
 
 public class GetAllTodosEndpointTest
 {
     private readonly HttpClient client;
-    private readonly TestTodosRepository repository;
+    private readonly TodosRepository repository;
 
     public GetAllTodosEndpointTest()
     {
-        this.repository = new TestTodosRepository();
-        var factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-                builder.ConfigureServices(services =>
-                    services.AddSingleton<ITodosRepository>(this.repository)));
+        var factory = new WebApplicationFactory<Program>();
+        this.repository = factory.Services.GetService<TodosRepository>() ?? throw new NullReferenceException(nameof(TodosRepository));
         this.client = factory.CreateClient();
     }
     

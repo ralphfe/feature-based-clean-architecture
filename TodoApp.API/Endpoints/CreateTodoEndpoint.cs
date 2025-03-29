@@ -1,10 +1,14 @@
 using Microsoft.OpenApi.Models;
-using TodoApp.Application.Features.CreateTodo;
+using TodoApp.Application.Features;
+using TodoApp.Domain.Entities;
+using TodoApp.Infrastructure.Persistence.Repository;
 
 namespace TodoApp.API.Endpoints;
 
-public class CreateTodoEndpoint : IEndpoint
+public class CreateTodoEndpoint : IEndpoint, IValidator<CreateTodoEndpoint.CreateTodoRequest>
 {
+    public record CreateTodoRequest(string Title, string? Description);
+    
     public string Pattern => "/todos";
     
     public void MapEndpoint(IEndpointRouteBuilder app)
@@ -21,15 +25,31 @@ public class CreateTodoEndpoint : IEndpoint
             .Produces(StatusCodes.Status400BadRequest);
     }
     
-    private async Task<IResult> Handler(CreateTodoCommandHandler todoCommandHandler, CreateTodoCommand command)
+    private async Task<IResult> Handler(CreateTodoRequest request, TodosRepository repository, ILogger<CreateTodoEndpoint> logger)
     {
-        var result = await todoCommandHandler.Execute(command);
-        
-        if (result.Value is not null)
+        var validationResult = this.Validate(request);
+        if (!validationResult.IsSuccess)
         {
-            return Results.Created(new Uri($"{Pattern}/{result.Value.Id}", UriKind.Relative), result.Value.Id);
+            logger.LogError("Validation failed: {Error}", validationResult.Error);
+            return Results.BadRequest(new { error = validationResult.Error });
         }
+
+        var todo = Todo.Create(request.Title, request.Description);
+        await repository.CreateTodoAsync(todo);
+        return Results.Created(new Uri($"{Pattern}/{todo.Id}", UriKind.Relative), todo.Id);
+    }
+    
+    public Result<CreateTodoRequest> Validate(CreateTodoRequest entity)
+    {
+        if (string.IsNullOrEmpty(entity.Title))
+            return new ValidationException("Title is required");
         
-        return Results.BadRequest(new { error = result.Error });
+        if (entity.Title.Length > 64)
+            return new ValidationException("Title cannot be longer than 64 characters");
+        
+        if (entity.Description?.Length > 256)
+            return new ValidationException("Description cannot be longer than 256 characters");
+
+        return entity;
     }
 }

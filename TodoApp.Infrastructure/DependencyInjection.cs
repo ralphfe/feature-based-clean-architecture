@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using TodoApp.Application.Interfaces;
 using TodoApp.Infrastructure.Extensions;
 using TodoApp.Infrastructure.Options;
 using TodoApp.Infrastructure.Persistence;
@@ -16,7 +15,7 @@ public static class DependencyInjection
         var options = services.GetAndConfigureOptions<DbOptions>(configuration, DbOptions.Options);
         services.AddDbContext<TodosDbContext>(builder => builder.UseInMemoryDatabase(options.ConnectionString));
         
-        services.AddScoped<ITodosRepository, TodosRepository>();
+        services.AddScoped<TodosRepository>();
         return services;
     }
 }

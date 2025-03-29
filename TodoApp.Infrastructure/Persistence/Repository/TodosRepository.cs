@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using TodoApp.Application.Interfaces;
 using TodoApp.Domain.Entities;
 
 namespace TodoApp.Infrastructure.Persistence.Repository;
 
-public class TodosRepository(TodosDbContext todosDbContext) : ITodosRepository
+public class TodosRepository(TodosDbContext todosDbContext)
 {
     public async Task<Todo?> GetTodoByIdAsync(Guid id)
     {

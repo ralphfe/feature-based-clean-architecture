@@ -1,6 +1,6 @@
 using Microsoft.OpenApi.Models;
-using TodoApp.Application.Features.GetTodoById;
 using TodoApp.Domain.Entities;
+using TodoApp.Infrastructure.Persistence.Repository;
 
 namespace TodoApp.API.Endpoints;
 
@@ -22,9 +22,9 @@ public class GetTodoByIdEndpoint : IEndpoint
             .Produces(StatusCodes.Status404NotFound);
     }
     
-    private async Task<IResult> Handler(GetTodoByIdQueryHandler getTodoByIdQuery, Guid id)
+    private async Task<IResult> Handler(TodosRepository repository, Guid id)
     {
-        var todo = await getTodoByIdQuery.Execute(id);
+        var todo = await repository.GetTodoByIdAsync(id);
         return todo is not null ? Results.Ok(todo) : Results.NotFound();
     }
 }
